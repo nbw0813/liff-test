@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>身体個性学 鑑定後アンケート</title>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+    background: #f3ece9;
+    padding: 32px 16px;
+    color: #333;
+    text-align: center;
+  }
+  .msg {
+    font-size: 15px;
+    margin-top: 24px;
+    line-height: 1.8;
+  }
+  .error {
+    color: #c00;
+    background: #fee;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 24px;
+    text-align: left;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e0d5d0;
+    border-top: 3px solid #c0392b;
+    border-radius: 50%;
+    margin: 24px auto 0;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="msg">読み込んでいます。少々お待ちください…</div>
+<div class="spinner"></div>
+<div id="errorBox"></div>
+
+<script>
+  // ここにLIFF IDを設定してください
+  const LIFF_ID = "2008373459-EgALV25y";
+
+  // 転送先の本番フォームURL
+  const FORM_URL = "https://script.google.com/macros/s/AKfycbzBHFDCHnfU35iOdJlK1LeB8_UpyP4DgC0csM1yT6g4YNP3S6iZ4nXHlSzkqncgcBdv/exec";
+
+  async function main() {
+    try {
+      await liff.init({ liffId: LIFF_ID });
+
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
+
+      const profile = await liff.getProfile();
+      const userId = profile.userId;
+
+      // フォームURLにユーザーIDをパラメータとして付けて移動
+      const dest = FORM_URL + "?lineUserId=" + encodeURIComponent(userId);
+      window.location.href = dest;
+
+    } catch (err) {
+      document.querySelector(".msg").textContent = "エラーが発生しました";
+      document.querySelector(".spinner").style.display = "none";
+      document.getElementById("errorBox").innerHTML =
+        '<div class="error">' + (err.message || err) + '</div>';
+    }
+  }
+
+  main();
+</script>
+
+</body>
+</html>
